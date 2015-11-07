@@ -15,10 +15,8 @@ def meanFrame(frame, queue):
 
 begin = time.time()
 cap = cv2.VideoCapture('timelapseVideo.avi')
-print cap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
-print cap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
-fourcc = cv2.cv.CV_FOURCC(*'XVID')
-out = cv2.VideoWriter('timelapseVideo3.avi',fourcc, cap.get(cv2.cv.CV_CAP_PROP_FPS), (1280,720))
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+out = cv2.VideoWriter('timelapseVideo.avi',fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 ret = True
 count = 0
 queue = lukaQueue()
