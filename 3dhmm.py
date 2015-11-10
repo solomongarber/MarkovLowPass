@@ -16,19 +16,22 @@ smooth_local_mult=100
 data_local_mult=1
 data_mult=2
 smooth_mult=1
-in_name='non-euclid-subsamp-100.avi'
+in_name='shrunken-subsamp-ne-100.avi'
 
 
 
 out_name='1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.avi'
 cap = cv2.VideoCapture(in_name)
+#fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fwidth=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 fheight=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-out = cv2.VideoWriter(out_name ,fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (fwidth,fheight))
+out = cv2.VideoWriter(out_name ,-1, int(cap.get(cv2.CAP_PROP_FPS)), (fwidth,fheight))
+print (fwidth,fheight)
 #tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 ret = True
-num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))+1
+num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+print num_frames
 nD = 2*distance+1
 num_pixels=fwidth*fheight
 num_channels=3
@@ -63,20 +66,23 @@ while(cap.isOpened() and ret):
     bp.flush()
     old_energy=next_energy
     time=time+1
+    if time == 20:
+        break
     print time
 
 time=time-nD-2
 final_label=np.uint8(np.argmin(old_energy,1))
 prev_labels=labels[np.array(range(num_pixels)),final_label]
-outframe=curr_data.get_output(final_labels)
+outframe=cv2.cvtColor(curr_data.get_output(final_label),3)
+print outframe.dtype
 out.write(outframe)
 for t in range(time,-1,-1):
     labels=bp[:,:,t]
-    cap.set(CV_CAP_PROP_POS_FRAMES,t);
+    cap.set(cv2.CAP_PROP_POS_FRAMES,t);
     ret,frame=cap.read()
     curr_frame=np.reshape(frame,(num_pixels,num_channels))
     curr_data.add_frame_left(curr_frame)
-    outframe=curr_data.get_output(prev_labels)
+    outframe=cv2.fromarray(curr_data.get_output(prev_labels))
     out.write(outframe)
     prev_labels=labels[range(num_pixels),prev_labels]
     print t

@@ -39,11 +39,11 @@ class dataQueue:
 
     def get_output(self,labels):
         output=np.zeros(self.frame_shape,dtype=np.uint8)
-        bad_idea=np.zeros((self.num_pixels,3,nD),dtype=uint8)
-        for l in range(nD):
+        bad_idea=np.zeros((self.num_pixels,3,self.nD),dtype=np.uint8)
+        for l in range(self.nD):
             bad_idea[:,:,l]=self.get_frame(l+1)
         for color in range(3):
-            output[:,:,color]=bad_idea[range(self.num_pixels),color,labels]
+            output[:,:,color]=np.reshape(bad_idea[range(self.num_pixels),color,labels],(self.frame_shape[0],self.frame_shape[1]))
         return output
 
 
