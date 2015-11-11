@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import dataQueue
 import tables as tb
-distance = 5
+distance = 9
 data_exp = 1
 smooth_exp = 2
 local_energy = False
@@ -20,15 +20,17 @@ in_name='shrunken-subsamp-ne-100.avi'
 
 
 
-out_name='1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.avi'
+out_name='1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.mp4'
 cap = cv2.VideoCapture(in_name)
-#fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+#fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fwidth=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 fheight=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-out = cv2.VideoWriter(out_name ,-1, int(cap.get(cv2.CAP_PROP_FPS)), (fwidth,fheight))
+#out = cv2.VideoWriter(out_name ,fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (fheight,fwidth),True)
+out = cv2.VideoWriter(out_name ,fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (fwidth,fheight),True)
 print (fwidth,fheight)
 #tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+tot_time=100
 ret = True
 num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 print num_frames
@@ -66,15 +68,16 @@ while(cap.isOpened() and ret):
     bp.flush()
     old_energy=next_energy
     time=time+1
-    if time == 20:
+    if time == tot_time:
         break
     print time
 
-time=time-nD-2
-final_label=np.uint8(np.argmin(old_energy,1))
+time=time-nD-3
+final_label=np.array(np.argmin(old_energy,1),dtype=np.uint8)
 prev_labels=labels[np.array(range(num_pixels)),final_label]
-outframe=cv2.cvtColor(curr_data.get_output(final_label),3)
-print outframe.dtype
+#outframe=cv2.cvtColor(curr_data.get_output(final_label),3)
+outframe=curr_data.get_output(final_label)
+#print outframe
 out.write(outframe)
 for t in range(time,-1,-1):
     labels=bp[:,:,t]
@@ -82,8 +85,9 @@ for t in range(time,-1,-1):
     ret,frame=cap.read()
     curr_frame=np.reshape(frame,(num_pixels,num_channels))
     curr_data.add_frame_left(curr_frame)
-    outframe=cv2.fromarray(curr_data.get_output(prev_labels))
+    outframe=curr_data.get_output(prev_labels)
     out.write(outframe)
+    #print outframe
     prev_labels=labels[range(num_pixels),prev_labels]
     print t
     
@@ -92,5 +96,5 @@ for t in range(time,-1,-1):
 
 f.close()
 cap.release()
-
+cv2.destroyAllWindows()
 
