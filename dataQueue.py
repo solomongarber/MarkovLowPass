@@ -9,7 +9,10 @@ class dataQueue:
         self.num_pixels=num_pixels
         self.middle=nD/2+1
         self.frames = deque()
+        #self.big_frames=deque()
+        self.used=deque()
         for i in range(nD+1):
+            #self.big_frames.append(np.zeros(big_size,dtype=np.uint8))
             self.frames.append(np.zeros(size,dtype=np.uint8))
         self.now=np.array(self.frames[self.middle],dtype=np.int)
         self.used=deque()

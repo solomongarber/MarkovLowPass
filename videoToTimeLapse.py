@@ -1,10 +1,10 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture('sampleInput.mp4')
+cap = cv2.VideoCapture('shrunken-subsamp-ne-100.avi')
 multiplier = 5
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
-out = cv2.VideoWriter('timelapseVideo.avi',fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+fourcc = cv2.VideoWriter_fourcc('m','p','4','v')
+out = cv2.VideoWriter('timelapseVideo.mp4',fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 
 ret = True
 count = int(cap.get(cv2.CAP_PROP_FPS))

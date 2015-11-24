@@ -2,8 +2,8 @@ import math
 import numpy as np
 import cv2
 import dataQueue
-import tables as tb
-from moviepy.editor import VideoFileClip
+#import tables as tb
+#from moviepy.editor import VideoFileClip
 distance = 9
 data_mult = 1
 smooth_exp = 2
@@ -15,13 +15,13 @@ smooth_local_energy = True
 smooth_local_exp = -1
 smooth_local_mult=200
 data_local_mult=1
-data_mult=2
+data_mult=10
 smooth_mult=1
-in_name='shrunken-subsamp-ne-100.avi'
+#in_name='shrunken-subsamp-ne-100.avi'
 #in_name='vitoybi.avi'
-
-clip=VideoFileClip(in_name)
-out_name='used1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.mp4'
+in_name='../non-euclid-subsamp-100.avi'
+#clip=VideoFileClip(in_name)
+out_name='used1dhmm-dist-'+str(distance)+'-data_mult-'+str(data_mult)+'-smooth_exp-'+str(smooth_exp)+'.mp4'
 cap = cv2.VideoCapture(in_name)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 #fourcc = cv2.VideoWriter_fourcc(*'XVID')
@@ -31,8 +31,8 @@ fheight=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps=cap.get(cv2.CAP_PROP_FPS)
 out = cv2.VideoWriter(out_name ,fourcc, fps, (fwidth,fheight),True)
 print (fwidth,fheight)
-tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-#tot_time=50
+#tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+tot_time=200
 ret = True
 
 #num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
