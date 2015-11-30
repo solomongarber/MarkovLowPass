@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import dataQueue
 import tables as tb
-from moviepy.editor import VideoFileClip
+#from moviepy.editor import VideoFileClip
 distance = 9
 data_mult = 1
 smooth_exp = 2
@@ -17,22 +17,24 @@ smooth_local_mult=200
 data_local_mult=1
 data_mult=2
 smooth_mult=1
-in_name='shrunken-subsamp-ne-100.avi'
+data_exp = 1
+#in_name='shrunken-subsamp-ne-100.avi'
+in_name='timelapseVideo.avi'
 #in_name='vitoybi.avi'
 
-clip=VideoFileClip(in_name)
-out_name='used1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.mp4'
+#clip=VideoFileClip(in_name)
+out_name='used1dhmm-dist-'+str(distance)+'-data_exp-'+str(data_exp)+'-smooth_exp-'+str(smooth_exp)+'.avi'#'.mp4'
 cap = cv2.VideoCapture(in_name)
-fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-#fourcc = cv2.VideoWriter_fourcc(*'XVID')
+#fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
 fwidth=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 fheight=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 #out = cv2.VideoWriter(out_name ,fourcc, int(cap.get(cv2.CAP_PROP_FPS)), (fheight,fwidth),True)
 fps=cap.get(cv2.CAP_PROP_FPS)
-out = cv2.VideoWriter(out_name ,fourcc, fps, (fwidth,fheight),True)
+out = cv2.VideoWriter(out_name ,fourcc, 30, (fwidth,fheight),True)
 print (fwidth,fheight)
-tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-#tot_time=50
+#tot_time=int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+tot_time=20
 ret = True
 
 #num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -115,11 +117,10 @@ for t in range(time,-1,-1):
     #print outframe
     prev_labels[:]=labels[range(num_pixels),prev_labels]
     print t
-    
-    
-    
+
+
+
 
 #f.close()
 cap.release()
 cv2.destroyAllWindows()
-
