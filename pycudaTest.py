@@ -11,7 +11,8 @@ start = time.time()
 in_name='timelapseVideo.avi'
 cap = cv2.VideoCapture(in_name)
 
-out_name = 'pycudaMean.avi'
+use_gpu = True
+out_name = 'pycudaMeanGPU='+str(use_gpu)+'.avi'
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 width=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -20,12 +21,13 @@ height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 out = cv2.VideoWriter(out_name ,fourcc, 30, (width,height),True)
 frameList = deque()
 ret = True
-use_gpu = True
+
 if(use_gpu):
     frameTotal = gpuarray.to_gpu(np.zeros((height,width, 3), dtype=np.uint32))
 else:
     frameTotal = np.zeros((height,width,3), dtype=np.uint32)
 #gpu_frameTotal = gpuarray.to_gpu(np.zeros((height,width, 3), dtype=np.uint32))
+print cap.read()
 while(cap.isOpened() and ret):
     ret, frame = cap.read()
     if(ret):
