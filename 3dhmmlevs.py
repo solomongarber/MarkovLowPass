@@ -4,8 +4,10 @@ import cv2
 #import dataQueue2
 import denergyQueue2
 
+stack_em=False
 distance = 20
 divisor=16
+#divisor=20
 smooth_exp = 2
 local_energy = True
 data_exp = 1
@@ -17,14 +19,28 @@ data_exp = 1
 data_local_mult=.5
 data_local_exp=2
 data_mult=1
-skip_frames=100
-smooth_mult=1
-in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
-start_name='calc_2'
+skip_frames=1
+smooth_mult=5
+#in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
+#start_name='calc_2'
+
 #in_name='../subsamp-change-threshold-0.06-MH12non-euclid.avi'
 #start_name='subsamp-change-threshold-0.06-MH12non-euclid'
+
+#in_name='../Quantizing-gravity.mp4'
+#start_name='quantizing-grav'
+
+#in_name='../Black-holes-by-Leonard-Susskind.mp4'
+#start_name='black-holes'
+
+#in_name='../DiffGeom18FrenetSerretEq.mp4'
+#start_name='frenet-seret'
+
+in_name='../preProcessGPU.avi'
+start_name='pre-process'
+
 #in_name='../non-euclid-subsamp-100.avi'
-out_name=start_name+'-loc-mul-'+str(data_local_mult)+'-loc-exp'+str(data_local_exp)+'-twolevs-divisor-' +str(divisor)+'-1dhmm-dist-'+str(distance)+'-data_mult-'+str(data_mult)+'-data-exp'+str(data_exp)+'smooth-mult'+str(smooth_mult)+'-smooth_exp-'+str(smooth_exp)+'.mp4'
+out_name=start_name+'-skip-'+str(skip_frames)+'-loc-mul-'+str(data_local_mult)+'-loc-exp'+str(data_local_exp)+'-twolevs-divisor-' +str(divisor)+'-1dhmm-dist-'+str(distance)+'-data_mult-'+str(data_mult)+'-data-exp'+str(data_exp)+'smooth-mult'+str(smooth_mult)+'-smooth_exp-'+str(smooth_exp)+"-stack_em"+str(stack_em)+'.mp4'
 
 cap = cv2.VideoCapture(in_name)
 fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
@@ -50,7 +66,7 @@ num_pixels=fwidth*fheight
 big_numpx=big_width*big_height
 num_channels=3
 if local_energy:
-    curr_data=denergyQueue2.denergyQueue2((big_width,big_height,num_channels),(big_numpx,num_channels),(num_pixels,num_channels),divisor,num_pixels,big_numpx,nD,smooth_exp,smooth_mult,data_exp,data_mult,data_local_exp,data_local_mult)
+    curr_data=denergyQueue2.denergyQueue2((big_width,big_height,num_channels),(big_numpx,num_channels),(num_pixels,num_channels),divisor,num_pixels,big_numpx,nD,smooth_exp,smooth_mult,data_exp,data_mult,data_local_exp,data_local_mult,stack_em)
 else:
     curr_data=dataQueue2.dataQueue2((big_width,big_height,num_channels),(big_numpx,num_channels),(num_pixels,num_channels),divisor,num_pixels,big_numpx,nD)
 old_energy=np.zeros((num_pixels,nD),dtype=np.int)
@@ -65,16 +81,17 @@ bp=np.zeros((num_pixels,nD,num_frames),dtype=np.uint8)
 
 while(cap.isOpened() and ret):
     print time
-    cap.set(cv2.CAP_PROP_POS_FRAMES,skip_frames*time);
+    #cap.set(cv2.CAP_PROP_POS_FRAMES,skip_frames*time);
     ret, frame = cap.read()
-    curr_data.add_frame(frame)
-    for label in range(nD):
-        label_frame=curr_data.get_frame(label+1)
-        denergy[:]=curr_data.get_dcost(label)
-        smenergy[:,:]=curr_data.get_scost(label_frame)
-        new_energy[:,:]=old_energy+smenergy
-        labels[:,label]=np.array(np.argmin(new_energy,1),dtype=np.uint8)
-        next_energy[:,label]=new_energy[range(num_pixels),labels[:,label]]+denergy
+    if ret:
+        curr_data.add_frame(frame)
+        for label in range(nD):
+            label_frame=curr_data.get_frame(label+1)
+            denergy[:]=curr_data.get_dcost(label)
+            smenergy[:,:]=curr_data.get_scost(label_frame)
+            new_energy[:,:]=old_energy+smenergy
+            labels[:,label]=np.array(np.argmin(new_energy,1),dtype=np.uint8)
+            next_energy[:,label]=new_energy[range(num_pixels),labels[:,label]]+denergy
     bp[:,:,time]=labels
     old_energy[:,:]=next_energy[:,:]
     time=time+1

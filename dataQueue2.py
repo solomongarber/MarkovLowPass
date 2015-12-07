@@ -17,7 +17,7 @@ class dataQueue2:
         self.big_frames=deque()
         for i in range(nD+1):
             self.big_frames.append(np.zeros(frame_shape,dtype=np.uint8))
-            self.frames.append(np.zeros(small_shape,dtype=np.int))
+            self.frames.append(np.zeros(small_shape,dtype=np.int)
         self.now=np.array(self.frames[self.middle],dtype=np.int)
         self.used=deque()
         #x=input_shape[1]
@@ -36,7 +36,6 @@ class dataQueue2:
         ans=np.zeros((self.small_square_shape[1],self.small_square_shape[0],3),dtype=np.int)
         x=self.input_shape[1]
         y=self.input_shape[0]
-        s=frame[0:x:self.divisor,0:y:self.divisor,:]/self.bigvisor
         for i in range(self.divisor):
             for j in range(self.divisor):
                 ans[:,:,:]+=frame[0+i:x:self.divisor,0+i:y:self.divisor,:]

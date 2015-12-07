@@ -2,7 +2,7 @@ import numpy as np
 from collections import deque
 
 class denergyQueue2:
-    def __init__(self,input_shape,frame_shape,small_shape,divisor,num_pixels,num_pixels_big,nD,smooth_exp,smooth_mult,data_exp,data_mult,data_local_exp,data_local_mult):
+    def __init__(self,input_shape,frame_shape,small_shape,divisor,num_pixels,num_pixels_big,nD,smooth_exp,smooth_mult,data_exp,data_mult,data_local_exp,data_local_mult,stack_em):
         self.input_shape=input_shape
         self.frame_shape=frame_shape
         self.small_square_shape=(input_shape[0]/divisor,input_shape[1]/divisor,3)
@@ -21,9 +21,13 @@ class denergyQueue2:
         self.middle=nD/2+1
         self.frames = deque()
         self.big_frames=deque()
+        self.stack_em=stack_em
         for i in range(nD+2):
             self.big_frames.append(np.zeros(frame_shape,dtype=np.uint8))
-            self.frames.append(np.zeros(small_shape,dtype=np.int)+255*(i%2))
+            if stack_em:
+                self.frames.append(np.zeros((small_shape[0],small_shape[1],self.bigvisor),dtype=np.int)+255*(i%2))
+            else:
+                self.frames.append(np.zeros((small_shape[0],small_shape[1]),dtype=np.int)+255*(i%2))
         self.now=np.array(self.frames[self.middle],dtype=np.int)
         self.used=deque()
         #x=input_shape[1]
@@ -39,14 +43,22 @@ class denergyQueue2:
         print self.expand
         
     def down_vec(self,frame):
-        ans=np.zeros((self.small_square_shape[1],self.small_square_shape[0],3),dtype=np.int)
+        if self.stack_em:
+            ans=np.zeros((self.small_square_shape[1],self.small_square_shape[0],3,self.bigvisor),dtype=np.int)
+        else:
+            ans=np.zeros((self.small_square_shape[1],self.small_square_shape[0],3),dtype=np.int)
         x=self.input_shape[1]
         y=self.input_shape[0]
         for i in range(self.divisor):
             for j in range(self.divisor):
-                ans[:,:,:]+=frame[0+i:x:self.divisor,0+i:y:self.divisor,:]
-        return np.reshape(ans,(self.small_square_shape[0]*self.small_square_shape[1],3))/self.bigvisor
-        
+                if self.stack_em:
+                    ans[:,:,:,self.divisor*i+j]+=frame[0+i:x:self.divisor,0+i:y:self.divisor,:]
+                else:
+                    ans[:,:,:]+=frame[0+i:x:self.divisor,0+i:y:self.divisor,:]
+        if self.stack_em:
+            return np.reshape(ans,(self.small_square_shape[0]*self.small_square_shape[1],3,self.bigvisor))
+        else:
+            return np.reshape(ans,(self.small_square_shape[0]*self.small_square_shape[1],3))/self.bigvisor
 
     def add_frame(self, frame):
         small_frame=self.down_vec(frame)
@@ -78,12 +90,18 @@ class denergyQueue2:
         return self.data_local_mult*(self.get_exp_diffs(label+1,label,self.data_local_exp)+self.get_exp_diffs(label+1,label+2,self.data_local_exp))
     
     def get_exp_diffs(self,l1,l2,pow):
-        return np.sum(np.power(np.abs(np.array(self.frames[l1],dtype=np.int)-np.array(self.frames[l2],dtype=np.int)),pow),1)
+        if self.stack_em:
+            return np.sum(np.sum(np.power(np.abs(np.array(self.frames[l1],dtype=np.int)-np.array(self.frames[l2],dtype=np.int)),pow),1),1)
+        else:
+            return np.sum(np.power(np.abs(np.array(self.frames[l1],dtype=np.int)-np.array(self.frames[l2],dtype=np.int)),pow),1)
 
     def get_scost(self,frame):
         smenergy=np.zeros((self.num_pixels,self.nD),dtype=np.int)
         for l in range(self.nD):
-            smenergy[:,l]=np.sum(np.power(np.abs(np.array(self.frames[l],dtype=np.int)-np.array(frame,dtype=np.int)),self.smooth_exp),1)
+            if self.stack_em:
+                smenergy[:,l]=np.sum(np.sum(np.power(np.abs(np.array(self.frames[l],dtype=np.int)-np.array(frame,dtype=np.int)),self.smooth_exp),1),1)
+            else:
+                smenergy[:,l]=np.sum(np.power(np.abs(np.array(self.frames[l],dtype=np.int)-np.array(frame,dtype=np.int)),self.smooth_exp),1)
         return self.smooth_mult*smenergy
 
     def get_frame_big(self,label):
