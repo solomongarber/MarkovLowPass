@@ -81,7 +81,7 @@ bp=np.zeros((num_pixels,nD,num_frames),dtype=np.uint8)
 
 while(cap.isOpened() and ret):
     print time
-    #cap.set(cv2.CAP_PROP_POS_FRAMES,skip_frames*time);
+    cap.set(cv2.CAP_PROP_POS_FRAMES,skip_frames*time);
     ret, frame = cap.read()
     if ret:
         curr_data.add_frame(frame)

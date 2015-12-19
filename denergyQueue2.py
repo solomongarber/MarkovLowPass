@@ -28,7 +28,7 @@ class denergyQueue2:
                 self.frames.append(np.zeros((small_shape[0],small_shape[1],self.bigvisor),dtype=np.int)+255*(i%2))
             else:
                 self.frames.append(np.zeros((small_shape[0],small_shape[1]),dtype=np.int)+255*(i%2))
-        self.now=np.array(self.frames[self.middle],dtype=np.int)
+        self.now=np.array(self.big_frames[self.middle],dtype=np.int)
         self.used=deque()
         #x=input_shape[1]
         #frame=np.zeros((input_shape[0],input_shape[1]),dtype=np.int)
@@ -68,12 +68,12 @@ class denergyQueue2:
         self.big_frames.append(big_frame)
         self.used.append(self.big_frames.popleft())
         self.frames.popleft()
-        self.now=self.frames[self.middle]
+        self.now=self.big_frames[self.middle]
 
     def add_frame_left(self):
         self.big_frames.appendleft(self.used.pop())
         self.big_frames.pop()
-        self.now=self.frames[self.middle]
+        self.now=self.big_frames[self.middle]
 
     def get_frame(self, label):
         return self.frames[label]
