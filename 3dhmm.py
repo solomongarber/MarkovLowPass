@@ -22,7 +22,7 @@ data_local_exp=2
 data_mult=1
 skip_frames=100
 smooth_mult=5
-bad_fraction=2.5
+bad_fraction=3
 median_support=1
 
 results_dir='./med_pyr_maxmin/'
@@ -47,7 +47,7 @@ start_name='calc_2'
 #start_name='pre-process'
 
 #in_name='../non-euclid-subsamp-100.avi'
-out_name=results_dir+'debug'+start_name+'-pyr-maxmin-block-delete-'+str(bad_fraction)+'-med-support'+str(median_support)+'-skip-'+str(skip_frames)+'-loc-mul-'+str(data_local_mult)+'-loc-exp'+str(data_local_exp)+'-twolevs-divisor-' +str(divisor)+'-1dhmm-dist-'+str(distance)+'-data_mult-'+str(data_mult)+'-data-exp'+str(data_exp)+'smooth-mult'+str(smooth_mult)+'-smooth_exp-'+str(smooth_exp)+"-stack_em"+str(stack_em)+'.mp4'
+out_name=results_dir+'debugfour'+start_name+'-pyr-maxmin-block-delete-'+str(bad_fraction)+'-med-support'+str(median_support)+'-skip-'+str(skip_frames)+'-loc-mul-'+str(data_local_mult)+'-loc-exp'+str(data_local_exp)+'-twolevs-divisor-' +str(divisor)+'-1dhmm-dist-'+str(distance)+'-data_mult-'+str(data_mult)+'-data-exp'+str(data_exp)+'smooth-mult'+str(smooth_mult)+'-smooth_exp-'+str(smooth_exp)+"-stack_em"+str(stack_em)+'.mp4'
 
 
 cap = cv2.VideoCapture(in_name)
@@ -97,7 +97,7 @@ def get_dispute(inframe,outframe):
     diff_window=np.convolve(diff_vec,bad_gaussian,mode='same')
     m=np.argmax(diff_window)
     bad_radius=bad_diam/2
-    s_width=bad_diam/4
+    s_width=bad_diam/2
     ll_cap=np.max((0,m-bad_radius-s_width))
     lr_cap=np.max((0,m-bad_radius))
     rl_cap=m+bad_radius
@@ -157,25 +157,39 @@ med=medQueue.medQueue(median_support,frame.shape,big_numpx,num_channels)
 #print outframe
 out.write(outframe)
 for t in range(time,-1,-1):
+    print 'a'
     labels[:,:]=bp[:,:,t+nD]
+    print 'b'
     curr_data.add_frame_left()
+    print 'c'
     outframe[:,:,:]=curr_data.get_output(prev_labels)
+    print 'd'
     inframe[:,:,:]=np.reshape(curr_data.now,frame.shape)
+    print 'e'
     (a,b)=get_dispute(inframe,outframe)
+    print 'f'
     #medframe[:,:,:]=vid_cache.stripeOut(inframe,a,b)
     stripeframe[:,:,:]=vid_cache.stripeOut(inframe,a,b)
+    print 'g'
     medframe[:,:,:]=inframe[:,:,:]
+    print 'h'
     medframe[:,a:b,:]=0
+    print 'i'
     if median_support>1:
         med.add_frame(medframe)
         writeframe[:,:,:]=med.get_median()
         out.write(writeframe)
     else:
         writeframe[:,:,:]=medframe
+    print 'j'
     out.write(inframe)
+    print 'k'
     out.write(outframe)
+    print 'l'
     out.write(writeframe)
+    print 'm'
     out.write(stripeframe)
+    print 'n'
     prev_labels[:]=labels[range(num_pixels),prev_labels]
     print t
     
