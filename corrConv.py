@@ -43,9 +43,9 @@ def sequentialCorr(pic1,pic2,support):
 def fastCorr(pic1,pic2,support):
     width=support*2+1
     numel=width*width
-    p1=np.sum(np.array(pic1,dtype=np.float),2)
+    p1=np.sum(np.array(pic1,dtype=np.float),2)/3
     p1_off=np.zeros(p1.shape,dtype=np.float)
-    p2=np.sum(np.array(pic2,dtype=np.float),2)
+    p2=np.sum(np.array(pic2,dtype=np.float),2)/3
     p2_off=np.zeros(p1.shape,dtype=np.float)
     means1=np.zeros(p1.shape,dtype=np.float)
     means2=np.zeros(p1.shape,dtype=np.float)
@@ -68,6 +68,7 @@ def fastCorr(pic1,pic2,support):
         sum_sq_diff1[:,:]=sum_sq_diff1+np.square(diffs1)
         p2_off[:,:]=p2_frame[xoff:p1.shape[0]+xoff,yoff:p1.shape[1]+yoff]
         diffs2[:,:]=p2_off-means2
+        #print numerator
         sum_sq_diff2[:,:]=sum_sq_diff2+np.square(diffs2)
         numerator[:,:]=numerator+diffs1*diffs2
     sum_sq_diff1[:,:]=np.sqrt(sum_sq_diff1/numel)

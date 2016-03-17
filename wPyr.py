@@ -40,10 +40,7 @@ def thresh_median(triangle, trind):
 def collapse(triangle,trind,wavelet):
     low=get_band(triangle,trind,trind.shape[0]-1)
     for band in range(1,trind.shape[0]):
-        print band
-        print low.shape
         high=get_band(triangle,trind,trind.shape[0]-band-1)
-        print high.shape
         low=low[:high.shape[0]]
         low=pywt.idwt(low,high,wavelet)
     return low

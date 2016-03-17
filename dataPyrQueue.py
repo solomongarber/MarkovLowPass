@@ -2,7 +2,7 @@ import numpy as np
 from collections import deque
 import lPyr
 
-class denergyQueue2:
+class dataPyrQueue:
     def __init__(self,input_shape,frame_shape,small_shape,divisor,num_pixels,num_pixels_big,nD,smooth_exp,smooth_mult,data_exp,data_mult,data_local_exp,data_local_mult,stack_em):
         self.input_shape=input_shape
         self.frame_shape=frame_shape

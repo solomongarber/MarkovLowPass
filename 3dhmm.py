@@ -157,39 +157,39 @@ med=medQueue.medQueue(median_support,frame.shape,big_numpx,num_channels)
 #print outframe
 out.write(outframe)
 for t in range(time,-1,-1):
-    print 'a'
+    #print 'a'
     labels[:,:]=bp[:,:,t+nD]
-    print 'b'
+    #print 'b'
     curr_data.add_frame_left()
-    print 'c'
+    #print 'c'
     outframe[:,:,:]=curr_data.get_output(prev_labels)
-    print 'd'
+    #print 'd'
     inframe[:,:,:]=np.reshape(curr_data.now,frame.shape)
-    print 'e'
+    #print 'e'
     (a,b)=get_dispute(inframe,outframe)
-    print 'f'
+    #print 'f'
     #medframe[:,:,:]=vid_cache.stripeOut(inframe,a,b)
     stripeframe[:,:,:]=vid_cache.stripeOut(inframe,a,b)
-    print 'g'
+    #print 'g'
     medframe[:,:,:]=inframe[:,:,:]
-    print 'h'
+    #print 'h'
     medframe[:,a:b,:]=0
-    print 'i'
+    #print 'i'
     if median_support>1:
         med.add_frame(medframe)
         writeframe[:,:,:]=med.get_median()
         out.write(writeframe)
     else:
         writeframe[:,:,:]=medframe
-    print 'j'
-    out.write(inframe)
-    print 'k'
-    out.write(outframe)
-    print 'l'
-    out.write(writeframe)
-    print 'm'
+    #print 'j'
+    #out.write(inframe)
+    #print 'k'
+    #out.write(outframe)
+    #print 'l'
+    #out.write(writeframe)
+    #print 'm'
     out.write(stripeframe)
-    print 'n'
+    #print 'n'
     prev_labels[:]=labels[range(num_pixels),prev_labels]
     print t
     

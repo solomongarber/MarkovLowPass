@@ -9,12 +9,12 @@ erode_support=5
 dilate_support=44 + erode_support
 epsilon=1./(dilate_support*dilate_support*2)
 skip_frames=100
-#skip_ahead=0
+skip_ahead=0
 
 results_dir='./erode_dilate/'
 
-in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
-start_name='calc_2'
+#in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
+#start_name='calc_2'
 
 #in_name='../subsamp-change-threshold-0.06-MH12non-euclid.avi'
 #start_name='subsamp-change-threshold-0.06-MH12non-euclid'
@@ -30,9 +30,9 @@ start_name='calc_2'
 #start_name='frenet-seret'
 #skip_ahead=6
 
-#in_name='../calc2-avg-sample.mp4'
-#start_name='calc-2-avg'
-#skip_frames=1
+in_name='../calc2-avg-sample.mp4'
+start_name='calc-2-avg'
+skip_frames=1
 
 #in_name='../preProcessGPU.avi'
 #start_name='pre-process'
