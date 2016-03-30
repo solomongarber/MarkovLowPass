@@ -24,8 +24,8 @@ thresh=True
 
 results_dir='./correlate/'
 
-#in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
-#start_name='calc_2'
+in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
+start_name='calc_2'
 
 #in_name='../noOrangeSampledEvery100.avi'
 #start_name='no_orange'
@@ -41,8 +41,8 @@ results_dir='./correlate/'
 #in_name='../Black-holes-by-Leonard-Susskind.mp4'
 #start_name='black-holes'
 
-in_name='../DiffGeom18FrenetSerretEq.mp4'
-start_name='frenet-seret'
+#in_name='../DiffGeom18FrenetSerretEq.mp4'
+#start_name='frenet-seret'
 
 
 #in_name='../calc2-avg-sample.mp4'
