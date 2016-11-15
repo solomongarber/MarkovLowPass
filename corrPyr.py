@@ -8,14 +8,14 @@ import os
 import time
 
 
-corr_support=13
+corr_support=15
 #morph_support=int(2.5*corr_support)+1
 #morph_support=25
 erode_support=corr_support/2
 #erode_support-corr_support
-skip_frames=30
-confidence=.999
-#confidence = 1-.1/(corr_support*corr_support)
+skip_frames=100
+#confidence=.9995
+confidence = 1-.1/(corr_support*corr_support)
 inference_lev=1
 nlevs=0
 thresh=True
@@ -24,10 +24,6 @@ results_dir='./correlate/'
 
 #in_name='../Calc2FirstOrderDiffEqSepofVars.mp4'
 #start_name='calc_2'
-
-#in_name='../noOrangeSampledEvery100.avi'
-#start_name='no_orange'
-#skip_frames=1
 
 #in_name='../subsamp-change-threshold-0.06-MH12non-euclid.avi'
 #start_name='subsamp-change-threshold-0.06-MH12non-euclid'
@@ -39,9 +35,14 @@ results_dir='./correlate/'
 #in_name='../Black-holes-by-Leonard-Susskind.mp4'
 #start_name='black-holes'
 
-in_name='../DiffGeom18FrenetSerretEq.mp4'
-start_name='frenet-seret'
+#in_name='../DiffGeom18FrenetSerretEq.mp4'
+#start_name='frenet-seret'
 
+#in_name='/home/luka/Downloads/surveillanceFootage.mp4'
+#start_name='surveillance'
+
+in_name='./preProcessGPU.avi'
+start_name='preProcessGPU'
 
 #in_name='../calc2-avg-sample.mp4'
 #start_name='calc-2-avg'
@@ -57,13 +58,16 @@ out_name=results_dir+start_name+'-correlate-'+str(corr_support)+'-mask-lev-'+str
 #os.system("mkdir "+slides_dir)
 
 cap = cv2.VideoCapture(in_name)
-fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-#fourcc2 = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+#fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
 frame_width=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-fps=cap.get(cv2.CAP_PROP_FPS)
+#fps=cap.get(cv2.CAP_PROP_FPS)
+fps=30
 
-out = cv2.VideoWriter(out_name+'.mp4',fourcc, fps, (frame_width,frame_height),True)
+
+out_name = out_name + '.avi'
+out = cv2.VideoWriter(out_name,fourcc, fps, (frame_width,frame_height),True)
 
 
 print (frame_width,frame_height)
@@ -90,9 +94,7 @@ bit_frame=np.zeros((old_frame.shape[0],old_frame.shape[1]),dtype=np.bool)
 bitmask=np.zeros((old_frame.shape[0],old_frame.shape[1]),dtype=np.uint8)
 
 out_frame=np.zeros((frame_height,frame_width,num_channels),dtype=np.uint8)
-t=700
-
-#out2=cv2.VideoWriter(out_name+'-mask-'+'.mp4',fourcc2, fps, (old_frame.shape[1],old_frame.shape[0]),True)
+t=0
 
 def get_new_frame(frame,nlevs):
     band=frame
@@ -129,19 +131,16 @@ while(cap.isOpened() and ret):
     cv2.imshow(str(t),(mask_frame*255)*new_frame)
     out_frame[:,:,:]=pyr_blender.maskOut(frame,mask_frame)
     tle=pyr_blender.get_top_level_energy()
-    
-    #if not(started):
-    #    bit_frame[:,:]=bit_frame|(bitmask==255)
-    #    if np.product(bit_frame):
-    #        started=True
-    #        print "started"
-    #        f.write(str(skip_frames*t)+','+str(tle)+'\n')
-    #        out.write(out_frame)
-            #out2.write(np.uint8((mask_frame*255)*new_frame))
-    #else:
-    f.write(str(skip_frames*t)+','+str(tle)+'\n')
-    out.write(out_frame)
-    #out2.write((mask_frame*255)*new_frame)
+    if not(started):
+        bit_frame[:,:]=bit_frame|(bitmask==255)
+        if np.product(bit_frame):
+            started=True
+            print "started"
+            f.write(str(skip_frames*t)+','+str(tle)+'\n')
+            out.write(out_frame)
+    else:
+        f.write(str(skip_frames*t)+','+str(tle)+'\n')
+        out.write(out_frame)
     t=t+1
     old_frame[:,:,:]=new_frame
     if t%10==0:

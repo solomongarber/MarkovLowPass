@@ -12,7 +12,7 @@ in_name='originalVideo.mp4'
 #in_name='timelapseVideo.avi'
 cap = cv2.VideoCapture(in_name)
 
-out_name = 'preProcessGPU.avi'
+out_name = 'preProcessGPUDiff_Mult=1.avi'
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 width=int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height=int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -23,7 +23,7 @@ current_frame_num = 0
 find_average_skip_by = 100
 find_frames_skip_by = 10
 difference_list = []
-difference_multiplier = 2
+difference_multiplier = 1
 
 #initial set up of prevframe
 ret, prevframe = cap.read()
