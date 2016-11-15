@@ -232,10 +232,41 @@ def lineify(ans,start,end,num):
         ans[x,y,2:]=255
     return ans
 
+def abs_tle_im(im):
+    temp=np.zeros(im.shape,dtype=np.int64)
+    temp[:,:,:]=cv2.pyrUp(cv2.pyrDown(im))[:im.shape[0],:im.shape[1],:]
+    temp[:,:,:]=np.abs(np.subtract(im,temp))
+    return temp
 
+def rep_bw(im):
+    ans=np.zeros((im.shape[0],im.shape[1]),dtype=np.uint8)
+    temp=np.zeros(im.shape)
+    temp[:,:]=im-np.min(im)
+    temp[:,:]=temp/np.max(temp)
+    ans[:,:]=np.uint8(temp*255)
+    cv2.imshow('ans',ans)
+    return ans
+
+def rep_flat_name(im,name):
+    ans=np.zeros((im.shape[0],im.shape[1]),dtype=np.uint8)
+    temp=np.zeros(im.shape)
+    temp[:,:]=im-np.min(im)
+    temp[:,:]=temp/np.max(temp)
+    ans[:,:]=np.uint8(temp*255)
+    cv2.imshow(name,ans)
+    return ans
+
+def rep_3d_name(im,name):
+    ans=np.zeros(im.shape,dtype=np.uint8)
+    temp=np.zeros(im.shape)
+    temp[:,:,:]=im-np.min(im)
+    temp[:,:,:]=temp/np.max(temp)
+    ans[:,:,:]=np.uint8(temp*255)
+    cv2.imshow(name,ans)
+    return ans
 
 def mk_blowup(im1,im2,outshape,X,Y,delta,lev,displacement,margin):
-    temp=np.zeros((im1.shape[0],im1.shape[1],2),dtype=np.int32)
+    temp=np.zeros((im1.shape[0],im1.shape[1],2),dtype=np.float64)
     temp[:,:,0]=np.sum(im1,2)/3
     temp[:,:,1]=np.sum(im2,2)/3
     for color in range(3):
